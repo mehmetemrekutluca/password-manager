@@ -4,11 +4,11 @@ from tkinter import Tk
 import pyperclip
 
 SEPERATOR = "-----"
-FILE_PASS = "sfr.txt"
+FILE_PASS = "pass.txt"
 FLAG_CHANGE_PASS = "flag_pass"
 FLAG_CHANGE_USERNAME = "flag_username"
 
-cryptor = input("Şifreyi girin: ")
+cryptor = input("Enter cryption key: >> ")
 
 def randomPassGenerate():
 	newid = ""
@@ -21,15 +21,15 @@ def savePass(whom, un, pw):
 	whom = whom.lower()
 	un = un.lower()
 	if (getPass(whom) != 0):
-		y = input(whom + " için zaten şifreniz bulunmaktadır. Güncellemek ister misiniz? (e/h) >> ")
-		if y == "e" or y == "E":
+		y = input("You already have a password for " + whom + ". Do you want to update? (y/n) >> ")
+		if y == "y" or y == "Y":
 			deletePass(whom)
 		else:
 			return getPass(whom)
 	with open(FILE_PASS, "a", encoding="utf-8") as fil:
 		fil.write(whom + SEPERATOR + encrypt(un) + SEPERATOR + str(encrypt(pw)) + "\n")
 	copyToClipboard(str(pw))
-	print(whom, "için yeni şifre", pw, "başarı ile kaydedildi.")
+	print("Password", pw, "has been saved succesfully for", whom)
 
 def getPass(whom):
 	whom = whom.lower()
@@ -57,13 +57,13 @@ def search(value):
 	with open(FILE_PASS, "r", encoding="utf-8") as fil:
 		a = fil.read().split("\n")
 		a.pop()
-		son = [["Platform", "Kullanıcı Adı", "Şifre"], ["-----------","-----------","-----------"]]
+		son = [["Platform", "User Name", "Password"], ["-----------","-----------","-----------"]]
 		for item in a:
 			b = item.split(SEPERATOR)
 			if(value in b[0]):
 				son.append([b[0], decrypt(b[1]), decrypt(b[2])])
 		if (len(son) <= 2):
-			print(value, "için arama sonucu bulunamadı.")
+			print("Couldn't find",value)
 			return
 		row_format ="{:15}{:30}{:}"
 		for item in son:
@@ -72,7 +72,7 @@ def search(value):
 def deletePass(whom):
 	whom = whom.lower()
 	if (getPass(whom) == 0):
-		print(whom, "için zaten bir şifreniz yok.")
+		print("You already don't have a password for", whom)
 		return
 	with open(FILE_PASS, "r", encoding="utf-8") as fil:
 		a = fil.read()
@@ -81,12 +81,12 @@ def deletePass(whom):
 		son = a[:kesbas] + a[kesbas + kesson + 1:]
 	with open(FILE_PASS, "w", encoding="utf-8") as fil:
 		fil.write(son)
-	print(whom, "şifreniz başarı ile silinmiştir.")
+	print("Your password for", whom, "has been successfully deleted.")
 
 def change(whom, newThing, flag):
 	whom = whom.lower()
 	if (getPass(whom) == 0):
-		print(whom, "için zaten bir şifreniz yok.")
+		print("You already don't have a password for", whom)
 		return
 	if (newThing == "rast" or newThing == "random"):
 		newThing = randomPassGenerate()
@@ -99,10 +99,10 @@ def change(whom, newThing, flag):
 		if flag == FLAG_CHANGE_PASS:
 			d = c[0] + SEPERATOR + c[1] + SEPERATOR + encrypt(newThing) + "\n" 
 			copyToClipboard(newThing)
-			print(whom, "şifreniz başarı ile", newThing ,"olarak değiştirilmiştir.")
+			print("Your password has been changed from", whom, "to", newThing, "succesfully.")
 		else:
 			d = c[0] + SEPERATOR + encrypt(newThing) + SEPERATOR + c[2] + "\n" 
-			print(whom, "kullanıcı adınız başarı ile", newThing, "olarak değiştirilmiştir.")
+			print("Your username has been changed from", whom, "to", newThing, "succesfully.")
 		son = a[:kesbas] + d + a[kesbas + kesson + 1:]
 	with open(FILE_PASS, "w", encoding="utf-8") as fil:
 		fil.write(son)
@@ -111,7 +111,7 @@ def printAllPasswords():
 	with open(FILE_PASS, "r", encoding="utf-8") as fil:
 		a = fil.read().split("\n")
 		a.pop()
-		son = [["Platform", "Kullanıcı Adı", "Şifre"], ["-----------","-----------","-----------"]]
+		son = [["Platform", "User Name", "Password"], ["-----------","-----------","-----------"]]
 		for item in a:
 			b = item.split(SEPERATOR)
 			son.append([b[0], decrypt(b[1]), decrypt(b[2])])
@@ -144,93 +144,96 @@ def decrypt(thing):
 	return r
 
 while True:
-	komut = input(">> ")
-	komut = komut.strip()
+	command = input(">> ")
+	command = command.strip()
 
-	if "add" in komut and komut.index("add") == 0:
-		p = input("Ne için yeni şifre oluşturmak istiyorsunuz? >> ")
-		u = input("Kullanıcı adını girin. >> ")
+	if "add" in command and command.index("add") == 0:
+		p = input("Do you want to create a password for what platform? >> ")
+		u = input("Enter your username. >> ")
 		savePass(p, u, randomPassGenerate())
 	
-	if "hard" in komut and komut.index("hard") == 0:
-		p = input("Ne için yeni şifre oluşturmak istiyorsunuz? >> ")
-		u = input("Kullanıcı adını girin. >> ")
-		s = input("Şifrenizi girin. >> ")
+	if "hard" in command and command.index("hard") == 0:
+		p = input("Do you want to create a password for what platform? >> ")
+		u = input("Enter your username. >> ")
+		s = input("Enter your password. >> ")
 		savePass(p, u, s)
 			
-	elif "get" in komut and komut.index("get") == 0:
-		a = komut.split(" ")
+	elif "get" in command and command.index("get") == 0:
+		a = command.split(" ")
 		if len(a) >= 2:
 			if a[1] == "user" or a[1] == "username" or a[1] == "kull":
 				if len(a) >= 3:
 					print(getUserName(a[2]))
 				else:
-					u = input("Ne için kullanıcı adını almak istiyorsunuz? >> ")
+					u = input("For which platform do you want to get your username? >> ")
+					print("Your username has been copied to the clipboard.")
 					print(getUserName(u))
 				continue
 			if getPass(a[1]) == 0:
-				print(a[1], "için şifreniz bulunmamaktadır.")
+				print("You don't have a password for", a[1])
 			else:
-				print("Kullanıcı adı ve şifreniz:", getPass(a[1]))
+				print("Your password has been copied to the clipboard.")
+				print("Your username and password:", getPass(a[1]))
 		else:
-			t = input("Ne için yeni şifre almak istiyorsunuz? >> ")
+			t = input("For which platform do you want to get your username? >> ")
 			if getPass(t) == 0:
-				print(t, "için şifreniz bulunmamaktadır.")
+				print("You don't have a password for", t)
 			else:
-				print("Kullanıcı adı ve şifreniz:", getPass(t))
+				print("Your password has been copied to the clipboard.")
+				print("Your username and password:", getPass(t))
 	
-	elif "search" in komut and komut.index("search") == 0:
-		a = komut.split(" ")
+	elif "search" in command and command.index("search") == 0:
+		a = command.split(" ")
 		if len(a) >= 2:
 			search(a[1])
 		else:
-			t = input("Aranacak metninizi girin. >> ")
+			t = input("Enter your search key. >> ")
 			search(t)
 
-	elif "delete" in komut and komut.index("delete") == 0:
-		a = komut.split(" ")
+	elif "delete" in command and command.index("delete") == 0:
+		a = command.split(" ")
 		if len(a) >= 2:
 			deletePass(a[1])
 		else:
-			t = input("Neyin şifresini silmek istiyorsunuz? >> ")
+			t = input("For which platform do you want to delete your password? >> ")
 			deletePass(t)
 	
-	elif "change" in komut and komut.index("change") == 0:
-		a = komut.split(" ")
+	elif "change" in command and command.index("change") == 0:
+		a = command.split(" ")
 		if len(a) >= 4:
 			if a[2] == "pass" or a[2] == "pw" or a[2] == "password":
 				change(a[1], a[3], FLAG_CHANGE_PASS)
 			else:
 				change(a[1], a[3], FLAG_CHANGE_USERNAME)
 		elif len(a) == 3:
-			t = input("Yeni değeri girin. (Rastgele için rast yazın.)>> ")
+			t = input("Enter new value. (Write random for random.)>> ")
 			if a[2] == "pass" or a[2] == "pw" or a[2] == "password":
 				change(a[1], t, FLAG_CHANGE_PASS)
 			else:
 				change(a[1], t, FLAG_CHANGE_USERNAME)
 		elif len(a) == 2:
-			f = input("Şifre mi değişecek, kullanıcı adı mı? (pass/user) >> ")
-			t = input("Yeni değeri girin. (Rastgele için rast yazın.)>> ")
+			f = input("Do you want to change username or password? (pass/user) >> ")
+			t = input("Enter new value. (Write random for random.)>> ")
 			if f == "pass" or f == "pw" or f == "password":
 				change(a[1], t, FLAG_CHANGE_PASS)
 			else:
 				change(a[1], t, FLAG_CHANGE_USERNAME)
 			
 		else:
-			n = input("Ne için değişiklik yapmak istiyorsunuz? >> ")
-			f = input("Şifre mi değişecek, kullanıcı adı mı? (pass/user) >> ")
-			t = input("Yeni değeri girin. (Rastgele için rast yazın.) >> ")
+			n = input("For which platform do you want to change something? >> ")
+			f = input("Do you want to change username or password? (pass/user) >> ")
+			t = input("Enter new value. (Write random for random.)>> ")
 			if f == "pass" or f == "pw" or f == "password":
 				change(n, t, FLAG_CHANGE_PASS)
 			else:
 				change(n, t, FLAG_CHANGE_USERNAME)
 
-	elif "all" in komut and komut.index("all") == 0:
+	elif "all" in command and command.index("all") == 0:
 		printAllPasswords()
 	
-	elif komut == "help":
-		print("add / hard / get (who) / delete (who) / change (who) (flag) (newValue) / all")
+	elif command == "help":
+		print("add / hard / get (who) / delete (who) / search / change (who) (flag) (newValue) / all")
 
-	elif komut == "cikis" or komut == "exit":
-		print("Görüşmek üzere.")
+	elif command == "cikis" or command == "exit":
+		print("See you.")
 		break
