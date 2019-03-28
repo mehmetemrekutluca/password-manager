@@ -232,7 +232,7 @@ while True:
 		printAllPasswords()
 	
 	elif command == "help":
-		print("add / hard / get (who) / delete (who) / search / change (who) (flag) (newValue) / all")
+		print("add / hard / get (who) / delete (who) / search (key) / change (who) (flag) (newValue) / all")
 
 	elif command == "cikis" or command == "exit":
 		print("See you.")
