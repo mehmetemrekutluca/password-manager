@@ -231,6 +231,22 @@ while True:
 	elif "all" in command and command.index("all") == 0:
 		printAllPasswords()
 	
+	elif "decrypt" in command and command.index("decrypt") == 0:
+		a = command.split(" ")
+		if len(a) >= 2:
+			if SEPERATOR in a[1]:
+				b = a[1].split(SEPERATOR)
+				print("User Name and Password:", decrypt(b[0]), decrypt(b[1]))
+			else:
+				print(decrypt(a[1]))
+		else:
+			t = input("What do you want to decrypt? >> ")
+			if SEPERATOR in t:
+				b = t.split(SEPERATOR)
+				print("User Name and Password:", decrypt(b[0]), decrypt(b[1]))
+			else:
+				print(decrypt(t))
+
 	elif command == "help":
 		print("add / hard / get (who) / delete (who) / search (key) / change (who) (flag) (newValue) / all")
 

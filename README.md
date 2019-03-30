@@ -42,6 +42,11 @@ This command will search the given key through platforms. Key even may be even a
 This command will change existing values. First argument is the platform, second argument is user or pass flag and third argument is the new value. It will also work without arguments. If the flag is pass and the value is "random", a random password will be generated.
 
 ```
+>> decrypt (thing)
+```
+This command will decrypt given thing. If it has SEPERATOR in it, decryption is made for both sides of the SEPERATOR. You can write the key as an argument.
+
+```
 >> all
 ```
 This command will list all your data.
